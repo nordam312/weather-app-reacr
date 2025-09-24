@@ -52,9 +52,60 @@ function App() {
   const [data, setData] = useState(null);
   const [dateAndTime, setDateAndTime] = useState("");
   const [locale, setLocale] = useState("ar");
+  const [location, setLocation] = useState({ lat: 41.01384, lon: 28.94966 }); // Default Istanbul
+  const [locationName, setLocationName] = useState("إسطنبول");
+  const [loading, setLoading] = useState(true);
+  const [locationError, setLocationError] = useState(false);
+
   const direction = locale === "ar" ? "rtl" : "ltr";
   const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
-  const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=41.01384&lon=28.94966&appid=${API_KEY}`;
+
+  // دالة لجلب بيانات الطقس
+  const fetchWeatherData = (lat, lon) => {
+    const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&lang=${locale}`;
+
+    const source = axios.CancelToken.source();
+    axios
+      .get(API_URL, {
+        cancelToken: source.token,
+      })
+      .then((response) => {
+        setData(response.data);
+        setLocationName(response.data.name);
+        setLoading(false);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+        } else {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        }
+      });
+
+    return source;
+  };
+
+  // دالة للحصول على موقع المستخدم
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({ lat: latitude, lon: longitude });
+          setLocationError(false);
+        },
+        (error) => {
+          console.log("Location error:", error);
+          setLocationError(true);
+          // استخدم الموقع الافتراضي (اسطنبول)
+        }
+      );
+    } else {
+      console.log("Geolocation not supported");
+      setLocationError(true);
+    }
+  };
 
   const handleChangeToArabic = () => {
     if (locale === "ar") {
@@ -68,12 +119,27 @@ function App() {
 
       moment.locale("ar");
     }
-    
+
   }
   useEffect(() => {
     i18n.changeLanguage(locale);
   }, [i18n]);
 
+  // useEffect للحصول على الموقع عند التحميل
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+
+  // useEffect لجلب بيانات الطقس عند تغيير الموقع
+  useEffect(() => {
+    const source = fetchWeatherData(location.lat, location.lon);
+
+    return () => {
+      source.cancel("Component unmounted");
+    };
+  }, [location, locale]); // إعادة جلب البيانات عند تغيير الموقع أو اللغة
+
+  // useEffect للوقت والتاريخ
   useEffect(() => {
     // Update time immediately
     setDateAndTime(moment().format("MMMM Do YYYY, h:mm:ss a"));
@@ -83,26 +149,8 @@ function App() {
       setDateAndTime(moment().format("MMMM Do YYYY, h:mm:ss a"));
     }, 1000);
 
-    const source = axios.CancelToken.source();
-    // Example API call using axios
-    axios
-      .get(API_URL, {
-        cancelToken: source.token,
-      })
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => {
-        if (axios.isCancel(error)) {
-          console.log("Request canceled:", error.message);
-        } else {
-          console.error("Error fetching data:", error);
-        }
-      });
-
     return () => {
       clearInterval(timer);
-      source.cancel("Component unmounted");
     };
   }, []);
   return (
@@ -119,31 +167,44 @@ function App() {
               alignItems: "center",
             }}
           >
+            {loading && (
+              <div style={{ color: "white", textAlign: "center" }}>
+                <Typography variant="h4" gutterBottom>
+                  جاري تحديد موقعك...
+                </Typography>
+                <Typography variant="body1">
+                  يرجى السماح بالوصول إلى موقعك
+                </Typography>
+              </div>
+            )}
+
+            {locationError && !loading && (
+              <div style={{ color: "white", textAlign: "center" }}>
+                <Typography variant="h5" gutterBottom>
+                  تعذر الحصول على موقعك
+                </Typography>
+                <Typography variant="body1">
+                  سيتم عرض طقس اسطنبول كموقع افتراضي
+                </Typography>
+              </div>
+            )}
+
+            {!loading && (
+              <>
             {/* CARD */}
             <div
-              style={{
-                backgroundColor: "rgb(28 52 91 / 36%)",
-                color: "white",
-                padding: 20,
-                borderRadius: 15,
-                boxShadow: "0 8px 32px 0 rgba( 0, 0, 0, 0.3 )",
-                width: "100%",
-              }}
+              className="weather-card"
               dir={direction}
             >
               {/* CONTENT */}
               <div>
                 {/* CITY & TIME */}
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "end",
-                    justifyContent: "start",
-                  }}
+                  className="city-time-container"
                   dir={direction}
                 >
                   <Typography variant="h2" component="div">
-                    {t("istanbul")}
+                    {loading ? "جاري تحديد الموقع..." : locationName}
                   </Typography>
                   <Typography
                     variant="h5"
@@ -157,23 +218,11 @@ function App() {
                 <hr />
 
                 {/* CONTAINER OF DEGREE & DESCREPTION & ICON */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <div className="weather-info-container">
                   {/* DEGREE & DESCREPTION  */}
                   <div dir={direction}>
                     {/* TEMP */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
+                    <div className="temperature-container">
                       <Typography
                         variant="h1"
                         component="div"
@@ -229,7 +278,7 @@ function App() {
                   </div>
                   {/*== DEGREE & DESCREPTION  ==*/}
 
-                  <CloudIcon style={{ fontSize: "200" }} />
+                  <CloudIcon className="weather-icon" style={{ fontSize: "200" }} />
                 </div>
                 {/*== CONTAINER OF DEGREE & DESCREPTION & ICON ==*/}
               </div>
@@ -253,6 +302,8 @@ function App() {
               </Button>
             </div>
             {/*== TRANSLATIONS CONTAINER ==*/}
+            </>
+            )}
           </div>
           {/*== CONTETNT CONTAINER ==*/}
         </Container>

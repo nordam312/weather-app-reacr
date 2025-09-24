@@ -39,6 +39,138 @@
 
 body {
   background-color: #0052d0 !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Mobile Responsive Styles */
+.weather-card {
+  background-color: rgb(28 52 91 / 36%);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 600px;
+}
+
+.city-time-container {
+  display: flex;
+  align-items: end;
+  justify-content: start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.weather-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.temperature-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Styles (max-width: 600px) */
+@media screen and (max-width: 600px) {
+  .weather-card {
+    padding: 15px;
+    margin: 10px;
+    border-radius: 12px;
+  }
+
+  .city-time-container {
+    flex-direction: column;
+    align-items: start;
+    gap: 5px;
+  }
+
+  .weather-info-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .temperature-container {
+    margin-bottom: 15px;
+  }
+
+  /* Adjust font sizes for mobile */
+  .MuiTypography-h1 {
+    font-size: 3rem !important;
+  }
+
+  .MuiTypography-h2 {
+    font-size: 2rem !important;
+  }
+
+  .MuiTypography-h4 {
+    font-size: 1.2rem !important;
+  }
+
+  .MuiTypography-h5 {
+    font-size: 0.9rem !important;
+  }
+
+  .MuiTypography-h6 {
+    font-size: 0.8rem !important;
+  }
+
+  /* Weather icon size */
+  .weather-icon {
+    font-size: 120px !important;
+  }
+}
+
+/* Small Mobile Styles (max-width: 380px) */
+@media screen and (max-width: 380px) {
+  .weather-card {
+    padding: 12px;
+    margin: 8px;
+  }
+
+  .MuiTypography-h1 {
+    font-size: 2.5rem !important;
+  }
+
+  .MuiTypography-h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .MuiTypography-h4 {
+    font-size: 1rem !important;
+  }
+
+  .MuiTypography-h5 {
+    font-size: 0.85rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .MuiTypography-h6 {
+    font-size: 0.75rem !important;
+  }
+
+  .weather-icon {
+    font-size: 100px !important;
+  }
+}
+
+/* Tablet Styles (600px - 960px) */
+@media screen and (min-width: 600px) and (max-width: 960px) {
+  .weather-card {
+    padding: 25px;
+  }
+
+  .MuiTypography-h1 {
+    font-size: 4rem !important;
+  }
+
+  .MuiTypography-h2 {
+    font-size: 2.5rem !important;
+  }
 }
 
 /* CUSTOM FONTS */
