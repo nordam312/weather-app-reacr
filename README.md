@@ -4,7 +4,6 @@ A modern, responsive weather application that automatically detects your locatio
 
 🔗 **Live Demo**: [https://weather-wbsite-nor.netlify.app/](https://weather-wbsite-nor.netlify.app/)
 
-![Weather App Screenshot](https://via.placeholder.com/800x400/87CEEB/ffffff?text=Weather+App)
 
 ## ✨ Features
 
