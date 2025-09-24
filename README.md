@@ -146,7 +146,7 @@ This project is open source and available under the MIT License.
 
 ## 👨‍💻 Developer
 
-Developed by **[Muhammad Nordam](https://github.com/nordam312)**
+Developed by **[MuhammadNur Damlahi](https://github.com/nordam312)**
 
 ---
 
