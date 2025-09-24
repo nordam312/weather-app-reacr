@@ -131,14 +131,6 @@ weatherapp/
 - `.env` file added to `.gitignore`
 - All requests use HTTPS
 
-## 📸 Screenshots
-
-### Arabic Interface
-![Arabic Interface](https://via.placeholder.com/600x400/4A90E2/ffffff?text=Arabic+Interface)
-
-### English Interface
-![English Interface](https://via.placeholder.com/600x400/87CEEB/ffffff?text=English+Interface)
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please:
