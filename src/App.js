@@ -12,9 +12,14 @@ import { useState, useEffect } from "react";
 // axios
 import axios from "axios";
 
+// time
+import moment from "moment";
+import "moment/min/locales"; // import Arabic locale
+
 // METERIAL UI ICONS
 import CloudIcon from "@mui/icons-material/Cloud";
 
+moment.locale("ar");
 const theme = createTheme({
   typography: {
     fontFamily: ["IBM"],
@@ -41,12 +46,20 @@ const theme = createTheme({
 
 function App() {
   const [data, setData] = useState(null);
+  const [dateAndTime, setDateAndTime] = useState("");
   const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
   const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=41.01384&lon=28.94966&appid=${API_KEY}`;
 
   useEffect(() => {
-    const source = axios.CancelToken.source();
+    // Update time immediately
+    setDateAndTime(moment().format("MMMM Do YYYY, h:mm:ss a"));
 
+    // Update time every second
+    const timer = setInterval(() => {
+      setDateAndTime(moment().format("MMMM Do YYYY, h:mm:ss a"));
+    }, 1000);
+
+    const source = axios.CancelToken.source();
     // Example API call using axios
     axios
       .get(API_URL, {
@@ -64,6 +77,7 @@ function App() {
       });
 
     return () => {
+      clearInterval(timer);
       source.cancel("Component unmounted");
     };
   }, []);
@@ -112,7 +126,7 @@ function App() {
                     component="div"
                     style={{ marginRight: 10 }}
                   >
-                    10-10-2020 الاثنين
+                    {dateAndTime}
                   </Typography>
                 </div>
                 {/*== CITY & TIME ==*/}
