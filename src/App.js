@@ -9,6 +9,10 @@ import Button from "@mui/material/Button";
 // react
 import { useState, useEffect } from "react";
 
+
+// i18n
+import { useTranslation } from "react-i18next";
+
 // axios
 import axios from "axios";
 
@@ -45,11 +49,16 @@ const theme = createTheme({
 });
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [data, setData] = useState(null);
   const [dateAndTime, setDateAndTime] = useState("");
   const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
   const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=41.01384&lon=28.94966&appid=${API_KEY}`;
 
+  useEffect(() => {
+    i18n.changeLanguage("ar");
+  }, [i18n]);
+  
   useEffect(() => {
     // Update time immediately
     setDateAndTime(moment().format("MMMM Do YYYY, h:mm:ss a"));
