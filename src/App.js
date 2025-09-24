@@ -50,7 +50,7 @@ function App() {
     // Example API call using axios
     axios
       .get(API_URL, {
-        cancelToken: source.token
+        cancelToken: source.token,
       })
       .then((response) => {
         setData(response.data);
@@ -129,36 +129,51 @@ function App() {
                   {/* DEGREE & DESCREPTION  */}
                   <div>
                     {/* TEMP */}
-                    <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <Typography
                         variant="h1"
                         component="div"
                         textAlign={"right"}
                       >
-                      {data ? Math.round(data.main.temp - 273.15) : '...'}&#176;
+                        {data ? Math.round(data.main.temp - 273.15) : "..."}
+                        &#176;
                       </Typography>
 
-                      {/* TODO : TEMP IMAGE */}
-
-                      <Typography
-                        variant="h4"
-                        component="div"
-                        textAlign={"right"}
-                      >
-                        غائم جزئياً
-                      </Typography>
+                      {data && data.weather && (
+                        <img
+                          alt="weather"
+                          src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}
+                        />
+                      )}
                     </div>
                     {/*== TEMP ==*/}
+                    <Typography
+                      variant="h4"
+                      component="div"
+                      textAlign={"right"}
+                    >
+                      {data ? data.weather[0].description : "..."}
+                    </Typography>
 
                     {/* MIN & MAX */}
                     <div textAlign={"right"} dir="rtl">
-                      <typography
+                      <Typography
                         variant="h6"
                         component="div"
                         textAlign={"right"}
                       >
-                        درجة الحرارة المتوقعة بين 20&#176; - 28&#176;
-                      </typography>
+                        درجة الحرارة المتوقعة بين{" "}
+                        {data ? Math.round(data.main.temp_min - 273.15) : "..."}
+                        &#176; -{" "}
+                        {data ? Math.round(data.main.temp_max - 273.15) : "..."}
+                        &#176;
+                      </Typography>
                     </div>
                     {/*== MIN & MAX ==*/}
                   </div>
