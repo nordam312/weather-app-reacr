@@ -6,6 +6,12 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
+// react
+import { useState, useEffect } from "react";
+
+// axios
+import axios from "axios";
+
 // METERIAL UI ICONS
 import CloudIcon from "@mui/icons-material/Cloud";
 
@@ -34,6 +40,33 @@ const theme = createTheme({
 });
 
 function App() {
+  const [data, setData] = useState(null);
+  const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
+  const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=41.01384&lon=28.94966&appid=${API_KEY}`;
+
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+
+    // Example API call using axios
+    axios
+      .get(API_URL, {
+        cancelToken: source.token
+      })
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled:", error.message);
+        } else {
+          console.error("Error fetching data:", error);
+        }
+      });
+
+    return () => {
+      source.cancel("Component unmounted");
+    };
+  }, []);
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
@@ -102,7 +135,7 @@ function App() {
                         component="div"
                         textAlign={"right"}
                       >
-                        25&#176;
+                      {data ? Math.round(data.main.temp - 273.15) : '...'}&#176;
                       </Typography>
 
                       {/* TODO : TEMP IMAGE */}
