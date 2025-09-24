@@ -9,7 +9,6 @@ import Button from "@mui/material/Button";
 // react
 import { useState, useEffect } from "react";
 
-
 // i18n
 import { useTranslation } from "react-i18next";
 
@@ -52,13 +51,29 @@ function App() {
   const { t, i18n } = useTranslation();
   const [data, setData] = useState(null);
   const [dateAndTime, setDateAndTime] = useState("");
+  const [locale, setLocale] = useState("ar");
+  const direction = locale === "ar" ? "rtl" : "ltr";
   const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
   const API_URL = `https://api.openweathermap.org/data/2.5/weather?lat=41.01384&lon=28.94966&appid=${API_KEY}`;
 
-  useEffect(() => {
+  const handleChangeToArabic = () => {
+    if (locale === "ar") {
+      setLocale("en");
+    i18n.changeLanguage("en");
+
+      moment.locale("en");
+    } else {
+      setLocale("ar");
     i18n.changeLanguage("ar");
+
+      moment.locale("ar");
+    }
+    
+  }
+  useEffect(() => {
+    i18n.changeLanguage(locale);
   }, [i18n]);
-  
+
   useEffect(() => {
     // Update time immediately
     setDateAndTime(moment().format("MMMM Do YYYY, h:mm:ss a"));
@@ -114,7 +129,7 @@ function App() {
                 boxShadow: "0 8px 32px 0 rgba( 0, 0, 0, 0.3 )",
                 width: "100%",
               }}
-              dir="rtl"
+              dir={direction}
             >
               {/* CONTENT */}
               <div>
@@ -125,10 +140,10 @@ function App() {
                     alignItems: "end",
                     justifyContent: "start",
                   }}
-                  dir="rtl"
+                  dir={direction}
                 >
                   <Typography variant="h2" component="div">
-                    اسطنبول
+                    {t("istanbul")}
                   </Typography>
                   <Typography
                     variant="h5"
@@ -150,7 +165,7 @@ function App() {
                   }}
                 >
                   {/* DEGREE & DESCREPTION  */}
-                  <div>
+                  <div dir={direction}>
                     {/* TEMP */}
                     <div
                       style={{
@@ -162,7 +177,7 @@ function App() {
                       <Typography
                         variant="h1"
                         component="div"
-                        textAlign={"right"}
+                        textAlign={locale === "ar" ? "right" : "left"}
                       >
                         {data ? Math.round(data.main.temp - 273.15) : "..."}
                         &#176;
@@ -175,27 +190,39 @@ function App() {
                         />
                       )}
                     </div>
+
                     {/*== TEMP ==*/}
                     <Typography
                       variant="h4"
                       component="div"
-                      textAlign={"right"}
+                      textAlign={locale === "ar" ? "right" : "left"}
+                      dir={direction}
                     >
-                      {data ? data.weather[0].description : "..."}
+                      {t(data ? data.weather[0].description : "...")}
                     </Typography>
 
                     {/* MIN & MAX */}
-                    <div textAlign={"right"} dir="rtl">
+                    <div
+                      textAlign={"right"}
+                      dir={direction}
+                    >
                       <Typography
                         variant="h6"
                         component="div"
-                        textAlign={"right"}
+                        textAlign={locale === "ar" ? "right" : "left"}
+                        style={{
+                          fontSize: locale === "en" ? "1rem" : "1.25rem",
+                        }}
+                        dir={direction}
                       >
-                        درجة الحرارة المتوقعة بين{" "}
-                        {data ? Math.round(data.main.temp_min - 273.15) : "..."}
-                        &#176; -{" "}
-                        {data ? Math.round(data.main.temp_max - 273.15) : "..."}
-                        &#176;
+                        {t("expectedTemp", {
+                          min: data
+                            ? Math.round(data.main.temp_min - 273.15)
+                            : "...",
+                          max: data
+                            ? Math.round(data.main.temp_max - 273.15)
+                            : "...",
+                        })}
                       </Typography>
                     </div>
                     {/*== MIN & MAX ==*/}
@@ -210,9 +237,19 @@ function App() {
             </div>
             {/*== CARD ==*/}
             {/* TRANSLATIONS CONTAINER */}
-            <div style={{ marginTop: 20, textAlign: "left", width: "100%" }}>
-              <Button variant="text" style={{ color: "white" }}>
-                English
+            <div
+              style={{
+                marginTop: 20,
+                textAlign: locale === "ar" ? "right" : "left",
+                width: "100%",
+              }}
+            >
+              <Button
+                variant="text"
+                style={{ color: "white" }}
+                onClick={handleChangeToArabic}
+              >
+                {locale === "ar" ? "English" : "العربية"}
               </Button>
             </div>
             {/*== TRANSLATIONS CONTAINER ==*/}
