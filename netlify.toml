@@ -1,6 +1,7 @@
 [build]
-  command = "npm install --legacy-peer-deps && npm run build"
+  command = "CI=false npm install --legacy-peer-deps && npm run build"
   publish = "build"
 
 [build.environment]
   NPM_FLAGS = "--legacy-peer-deps"
+  CI = "false"
